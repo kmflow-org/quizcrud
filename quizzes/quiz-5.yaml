@@ -1,0 +1,59 @@
+title: Workshop 4,5 quiz
+id: 5
+questions:
+  - text: What does the following command do?
+    id: 1
+    code: |
+      $ docker run -it <image> bash
+    type: single
+    options:
+      - It's to build a container image
+      - Starts a container, runs the bash command in the container
+    answers:
+      - 1
+  - text: What does the following command do?
+    id: 2
+    code: |
+      $ docker run -p 8080:8080 quizengine
+    type: multiple
+    options:
+      - Runs the quizengine conainer
+      - Runs a container based on the quizengine image
+      - Maps host port 8080 to container port 8080
+    answers:
+      - 1
+      - 2
+  - text: What does the following command do?
+    id: 3
+    code: |
+      $ docker run -v ~/somedir:/app/somedir quizengine
+    type: multiple
+    options:
+      - Runs the quizengine conainer
+      - Runs a container based on the quizengine image
+      - The contents of the local /app/somedir will be inside the container at ~/somedir
+      - The contents of the local ~/somedir will be available inside the container at /app/somedir
+    answers:
+      - 1
+      - 3
+  - text: Based on the code below, which of the following is true?
+    id: 4
+    code: |
+      FROM golang:1.21.1 as build
+      .
+      .
+      FROM scratch
+      COPY --from=build /app/quizengine /app/quizengine
+      CMD ['/app/quizengine']
+    type: multiple
+    options:
+      - The size of the resultant image will be quite large
+      - The size of the resultant image will be quite small
+      - docker run -it <image> bash  -> will fail
+      - docker run -it <image> ls -> will succeed
+      - The resultant image has a very low attack surface
+    answers:
+      - 1
+      - 2
+      - 4
+

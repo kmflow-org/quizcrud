@@ -1,0 +1,86 @@
+title: Workshop 1 contd.. quiz 
+id: 2
+questions:
+  - text: The difference between a public subnet and private subnet is that
+    id: 1
+    type: multiple
+    options:
+      - A public subnet has a route to the internet via an internet gateway
+      - A private subnet has a route to the internet via a NAT gateway
+      - A private subnet has a route to the internet via an internet gateway
+    answers:
+      - 0
+      - 1
+  - text: Which subnet will a NAT gateway live on?
+    id: 2
+    type: single
+    options:
+      - Private subnet
+      - Public subnet
+    answers:
+      - 1
+  - text: A VPC endpoint helps when..
+    id: 3
+    type: multiple
+    options:
+      - You want to access an AWS service internally over private ip
+      - You want to access an AWS service over public ip
+      - You don't have route to the internet and want to access an AWS service
+    answers:
+      - 0
+      - 2
+  - text: If my private subnet has a route to the internet via NAT G/w
+    id: 4
+    type: single
+    options:
+      - I still need the VPC endpoint
+      - Then I don't really need a VPC endpoint to access an AWS service
+    answers:
+      - 1
+  - text: You can connect to an EC2 private instance without using SSH
+    id: 5
+    type: single
+    options:
+      - Ha ha you are joking!!
+      - Yes you can
+    answers:
+      - 1
+  - text: When using SSM the following are some pre-requisites that need to be taken care of
+    id: 6
+    type: multiple
+    options:
+      - The instance must be on a private subnet
+      - An IAM role with the AmazonSSMManagedInstanceCore policy needs to be attached
+      - SSM agent needs to be installed on the instance
+    answers:
+      - 1
+      - 2
+  - text: An IAM role may be assigned to a user or an ec2 instance
+    id: 7
+    type: single
+    options:
+      - true
+      - false
+    answers:
+      - 0
+  - text: What is the command to check an instance's identity with AWS?
+    id: 8
+    type: single
+    options:
+      - whoami
+      - aws sts get-caller-identity
+      - aws iam get-user-info
+    answers:
+      - 1
+  - text: What is the command SSM into an instance?
+    id: 9
+    type: single
+    options:
+      - ssm -i pemfile user@instance_id
+      - ssh -i pemfile user@publicip
+      - aws ssm start-session --target <instanceid> --profile <profile> --region <region>
+    answers:
+      - 2
+
+
+
