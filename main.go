@@ -169,6 +169,7 @@ func createHandler(w http.ResponseWriter, r *http.Request) {
 
 		err := yaml.NewDecoder(r.Body).Decode(&quiz)
 		if err != nil {
+			fmt.Printf("Failed to parse quiz data: %v", err)
 			http.Error(w, "Failed to parse quiz data", http.StatusBadRequest)
 			return
 		}
@@ -184,6 +185,7 @@ func createHandler(w http.ResponseWriter, r *http.Request) {
 		// Ensure the quizzes directory exists
 		err = saveQuizToS3(quiz)
 		if err != nil {
+			fmt.Printf("Failed to save quiz: %v", err)
 			http.Error(w, fmt.Sprintf("Failed to save quiz: %v", err), http.StatusInternalServerError)
 			return
 		}
@@ -196,6 +198,7 @@ func createHandler(w http.ResponseWriter, r *http.Request) {
 func listQuizzesHandler(w http.ResponseWriter, r *http.Request) {
 	summaries, err := listQuizzesFromS3()
 	if err != nil {
+		fmt.Printf("Failed to list quizzes: %v", err)
 		http.Error(w, fmt.Sprintf("Failed to list quizzes: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -247,6 +250,7 @@ func listQuizzesHandler(w http.ResponseWriter, r *http.Request) {
 	t := template.Must(template.New("quizList").Parse(tmpl))
 	err = t.Execute(w, summaries)
 	if err != nil {
+		fmt.Printf("Failed to render template: %v", err)
 		http.Error(w, "Failed to render template", http.StatusInternalServerError)
 		return
 	}
@@ -256,6 +260,7 @@ func listQuizzesHandler(w http.ResponseWriter, r *http.Request) {
 func quizListHandler(w http.ResponseWriter, r *http.Request) {
 	summaries, err := listQuizzesFromS3()
 	if err != nil {
+		fmt.Printf("Failed to list quizzes: %v", err)
 		http.Error(w, fmt.Sprintf("Failed to list quizzes: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -293,6 +298,7 @@ func deleteQuizHandler(w http.ResponseWriter, r *http.Request) {
 	quizID := filepath.Base(r.URL.Path)
 	err := deleteQuizFromS3("quiz-" + quizID)
 	if err != nil {
+		fmt.Printf("Failed to delete quiz: %v", err)
 		http.Error(w, fmt.Sprintf("Failed to delete quiz: %v", err), http.StatusInternalServerError)
 		return
 	}

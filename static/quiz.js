@@ -93,7 +93,7 @@ function saveQuiz() {
         questions: questions
     };
 
-    fetch('http://localhost:8081/create', {
+    fetch('/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

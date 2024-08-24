@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: quizcrudsa
+  namespace: quizcrud
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::533675705859:role/quizengine-s3-irsa-role

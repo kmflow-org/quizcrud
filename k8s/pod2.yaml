@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: quizcrud
+  namespace: quizcrud
+spec:
+  serviceAccountName: quizcrudsa
+  containers:
+  - name: qcrud
+    image: 533675705859.dkr.ecr.us-west-2.amazonaws.com/quizcrud:v5
+    ports:
+    - containerPort: 8081
+    volumeMounts:
+    - name: config
+      mountPath: /app/config.yaml
+      subPath: config.yaml
+  volumes:
+  - name: config
+    configMap:
+      name: quizcrud
