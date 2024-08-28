@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quizcrud
+  namespace: quizcrud
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: quizcrud
+  template:
+    metadata:
+      labels:
+        app: quizcrud
+    spec:
+      serviceAccountName: quizcrud
+      containers:
+      - name: qcrud
+        image: 533675705859.dkr.ecr.us-west-2.amazonaws.com/quizcrud:v2
+        ports:
+        - containerPort: 8081
+        volumeMounts:
+        - name: config
+          mountPath: /app/config.yaml
+          subPath: config.yaml
+      volumes:
+      - name: config
+        configMap:
+          name: quizcrud
