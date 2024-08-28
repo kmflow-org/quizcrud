@@ -4,10 +4,10 @@ metadata:
   name: quizcrud
   namespace: quizcrud
 spec:
-  serviceAccountName: quizcrudsa
+  serviceAccountName: quizcrud
   containers:
   - name: qcrud
-    image: 533675705859.dkr.ecr.us-west-2.amazonaws.com/quizcrud:v5
+    image: 533675705859.dkr.ecr.us-west-2.amazonaws.com/quizcrud:v1
     ports:
     - containerPort: 8081
     volumeMounts:

@@ -102,7 +102,7 @@ function saveQuiz() {
     }).then(response => {
         if (response.ok) {
             alert('Quiz saved successfully!');
-            window.location.href = '/quizzes';
+            window.location.href = '/quizlist';
         } else {
             alert('Failed to save the quiz.');
         }
