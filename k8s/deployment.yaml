@@ -16,7 +16,7 @@ spec:
       serviceAccountName: quizcrud
       containers:
       - name: qcrud
-        image: 533675705859.dkr.ecr.us-west-2.amazonaws.com/quizcrud:v2
+        image: 533675705859.dkr.ecr.us-west-2.amazonaws.com/quizcrud:v1
         ports:
         - containerPort: 8081
         volumeMounts:

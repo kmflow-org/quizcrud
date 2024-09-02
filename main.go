@@ -307,7 +307,14 @@ func deleteQuizHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Quiz deleted successfully"))
 }
 
+func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "All is well")
+}
+
 func main() {
+
+	http.HandleFunc("/health", healthCheckHandler)
+
 	// Serve static files (HTML, JS, etc.)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
