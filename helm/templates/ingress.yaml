@@ -3,6 +3,11 @@ kind: Ingress
 metadata:
   name: {{ include "quizcrud.fullname" . }}
   annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/target-type: ip # Can be 'ip' (for IP addresses) or 'instance' (for EC2 instances)
     alb.ingress.kubernetes.io/group.name: "quizzer-alb"
 spec:
   rules:
