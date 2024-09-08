@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "quizfrontend.fullname" . }}
+  name: {{ include "quizcrud.fullname" . }}
   annotations:
     alb.ingress.kubernetes.io/group.name: "quizzer-alb"
 spec:
