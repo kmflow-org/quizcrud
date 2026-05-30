@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -16,10 +17,24 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+/*
+mode: "local"
+local:
+
+	data_dir: "quizzes"
+
+aws:
+
+	s3_bucket: "kmflow-quizzes"
+*/
 type Config struct {
 	AWS struct {
 		S3Bucket string `yaml:"s3_bucket"`
 	} `yaml:"aws"`
+	Local struct {
+		DataDir string `yaml:"data_dir"`
+	} `yaml:"local"`
+	Mode string `yaml:"mode"`
 }
 
 // Quiz represents the structure of the quiz with a unique ID
@@ -140,6 +155,74 @@ func listQuizzesFromS3() ([]QuizSummary, error) {
 	return summaries, nil
 }
 
+func listQuizzesFromLocal() ([]QuizSummary, error) {
+	files, err := os.ReadDir(config.Local.DataDir)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read local quizzes directory: %v", err)
+	}
+	var summaries []QuizSummary
+	for _, file := range files {
+		if file.IsDir() || filepath.Ext(file.Name()) != ".yaml" {
+			continue
+		}
+		quizID := file.Name()[:len(file.Name())-len(filepath.Ext(file.Name()))]
+		quiz, err := getQuizFromLocal(quizID)
+		if err != nil {
+			return nil, err
+		}
+		summaries = append(summaries, QuizSummary{ID: quiz.ID, Title: quiz.Title})
+	}
+	return summaries, nil
+}
+
+func listQuizzes() ([]QuizSummary, error) {
+	if strings.EqualFold(config.Mode, "local") {
+		return listQuizzesFromLocal()
+	}
+
+	return listQuizzesFromS3()
+}
+
+func saveQuizToLocal(quiz Quiz) error {
+	quizData, err := yaml.Marshal(quiz)
+	if err != nil {
+		return fmt.Errorf("failed to marshal quiz: %v", err)
+	}
+
+	if err := os.MkdirAll(config.Local.DataDir, 0o755); err != nil {
+		return fmt.Errorf("failed to create local quizzes directory %s: %v", config.Local.DataDir, err)
+	}
+
+	fileName := fmt.Sprintf("quiz-%s.yaml", quiz.ID)
+	filePath := filepath.Join(config.Local.DataDir, fileName)
+
+	if err := os.WriteFile(filePath, quizData, 0o644); err != nil {
+		return fmt.Errorf("failed to write local quiz file %s: %v", filePath, err)
+	}
+
+	return nil
+}
+
+func getQuizFromLocal(quizID string) (*Quiz, error) {
+	fileName := quizID
+	if filepath.Ext(fileName) == "" {
+		fileName = fmt.Sprintf("%s.yaml", fileName)
+	}
+
+	filePath := filepath.Join(config.Local.DataDir, fileName)
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read local quiz file %s: %v", filePath, err)
+	}
+
+	var quiz Quiz
+	if err := yaml.Unmarshal(data, &quiz); err != nil {
+		return nil, fmt.Errorf("failed to parse local quiz file %s: %v", filePath, err)
+	}
+
+	return &quiz, nil
+}
+
 // deleteQuizFromS3 deletes a quiz from the S3 bucket
 func deleteQuizFromS3(quizID string) error {
 	fileName := fmt.Sprintf("%s.yaml", quizID)
@@ -155,16 +238,34 @@ func deleteQuizFromS3(quizID string) error {
 	return nil
 }
 
+func deleteQuizFromLocal(quizID string) error {
+	fileName := quizID
+	if filepath.Ext(fileName) == "" {
+		fileName = fmt.Sprintf("%s.yaml", fileName)
+	}
+
+	filePath := filepath.Join(config.Local.DataDir, fileName)
+	if err := os.Remove(filePath); err != nil {
+		if os.IsNotExist(err) {
+			return fmt.Errorf("local quiz file not found: %s", filePath)
+		}
+		return fmt.Errorf("failed to delete local quiz file %s: %v", filePath, err)
+	}
+
+	return nil
+}
+
 // Handle the GET request to serve the HTML page
 func createHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
+	switch r.Method {
+	case http.MethodGet:
 		tmpl, err := template.ParseFiles("static/index.html")
 		if err != nil {
 			http.Error(w, "Could not load template", http.StatusInternalServerError)
 			return
 		}
 		tmpl.Execute(w, nil)
-	} else if r.Method == http.MethodPost {
+	case http.MethodPost:
 		var quiz Quiz
 
 		err := yaml.NewDecoder(r.Body).Decode(&quiz)
@@ -182,8 +283,11 @@ func createHandler(w http.ResponseWriter, r *http.Request) {
 			quiz.Questions[i].ID = i + 1
 		}
 
-		// Ensure the quizzes directory exists
-		err = saveQuizToS3(quiz)
+		if strings.EqualFold(config.Mode, "local") {
+			err = saveQuizToLocal(quiz)
+		} else {
+			err = saveQuizToS3(quiz)
+		}
 		if err != nil {
 			fmt.Printf("Failed to save quiz: %v", err)
 			http.Error(w, fmt.Sprintf("Failed to save quiz: %v", err), http.StatusInternalServerError)
@@ -196,7 +300,7 @@ func createHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func listQuizzesHandler(w http.ResponseWriter, r *http.Request) {
-	summaries, err := listQuizzesFromS3()
+	summaries, err := listQuizzes()
 	if err != nil {
 		fmt.Printf("Failed to list quizzes: %v", err)
 		http.Error(w, fmt.Sprintf("Failed to list quizzes: %v", err), http.StatusInternalServerError)
@@ -258,7 +362,7 @@ func listQuizzesHandler(w http.ResponseWriter, r *http.Request) {
 
 // Handle the GET request to return quiz list in JSON format
 func quizListHandler(w http.ResponseWriter, r *http.Request) {
-	summaries, err := listQuizzesFromS3()
+	summaries, err := listQuizzes()
 	if err != nil {
 		fmt.Printf("Failed to list quizzes: %v", err)
 		http.Error(w, fmt.Sprintf("Failed to list quizzes: %v", err), http.StatusInternalServerError)
@@ -277,7 +381,16 @@ func quizHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	quizID := filepath.Base(r.URL.Path)
 
-	quiz, err := getQuizFromS3("quiz-" + quizID)
+	var (
+		quiz *Quiz
+		err  error
+	)
+
+	if strings.EqualFold(config.Mode, "local") {
+		quiz, err = getQuizFromLocal("quiz-" + quizID)
+	} else {
+		quiz, err = getQuizFromS3("quiz-" + quizID)
+	}
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Quiz not found: %v", err), http.StatusNotFound)
 		return
@@ -296,7 +409,12 @@ func deleteQuizHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	quizID := filepath.Base(r.URL.Path)
-	err := deleteQuizFromS3("quiz-" + quizID)
+	var err error
+	if strings.EqualFold(config.Mode, "local") {
+		err = deleteQuizFromLocal("quiz-" + quizID)
+	} else {
+		err = deleteQuizFromS3("quiz-" + quizID)
+	}
 	if err != nil {
 		fmt.Printf("Failed to delete quiz: %v", err)
 		http.Error(w, fmt.Sprintf("Failed to delete quiz: %v", err), http.StatusInternalServerError)

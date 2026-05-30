@@ -1,0 +1,192 @@
+title: Linux & Git - session 1 quiz
+id: 0
+questions:
+  - text: I use linux almost everyday in some or the other way
+    id: 1
+    type: single
+    options:
+      - Absolutely Not
+      - It's actually true
+    answers:
+      - 1
+  - text: Which command can I use to see hidden files in linux?
+    id: 2
+    type: multiple
+    options:
+      - ls
+      - ls -a
+      - ls -l
+    answers:
+      - 1
+  - text: Which of the following will print "My age is 10"
+    id: 3
+    type: multiple
+    options:
+      - echo "My age is 10"
+      - x=10; echo "My age is $x"
+      - x=10; echo 'My age is x'
+    answers:
+      - 0
+      - 1
+  - text: The shell runs in?
+    id: 4
+    type: single
+    options:
+      - User space
+      - Kernel space
+    answers:
+      - 0
+  - text: If I want to rename a file in linux, I can use the command
+    id: 5
+    type: single
+    options:
+      - cp
+      - mv
+      - rename
+    answers:
+      - 1
+  - text: To view the contents of a file in linux, I can use the command
+    id: 6
+    type: multiple
+    options:
+      - cat
+      - less
+      - more
+    answers:
+      - 0
+      - 1
+      - 2
+  - text: What happens if I type cd and hit enter?
+    id: 7
+    type: single
+    options:
+      - Nothing
+      - I will be taken to the home directory
+    answers:
+      - 1
+  - text: How can I tell if a file is a directory or not?
+    id: 8
+    type: single
+    options:
+      - If I do ls -l, directories will have an "l" at the beginning of the permissions string
+      - If I do ls -l, directories will have a "f" at the beginning of the permissions string
+      - If I do ls -l, directories will have a "d" at the beginning of the permissions string
+    answers:
+      - 2
+  - text: Which of the following commands can I use to create a directory in linux?
+    id: 9
+    type: multiple
+    options:
+      - mkdir
+      - rmdir
+      - touch
+    answers:
+      - 0
+  - text: how can I see the first 10 lines of a file in linux?
+    id: 10
+    type: single
+    options:
+      - head -n 10 filename
+      - tail -n 10 filename
+    answers:
+      - 0
+  - text: The difference between less and more is that
+    id: 11
+    type: single
+    options:
+      - more allows you to scroll up and down, less only allows you to scroll down
+      - less allows you to scroll up and down, more only allows you to scroll down
+    answers:
+      - 1
+  - text: Everything in linux is a file including directories and devices
+    id: 12
+    type: single
+    options:
+      - True
+      - False
+    answers:
+      - 0
+  - text: Which of the following commands can I use to find the location of an executable in linux?
+    id: 13
+    type: single
+    options:
+      - which
+      - whereis
+      - find
+    answers:
+      - 0
+  - text: Which of the following commands can I use to remove a directory in linux?
+    id: 14
+    type: single
+    options:
+      - rmdir
+      - rm -r
+      - rm
+    answers:
+      - 0
+      - 1
+  - text: The difference between rm and rmdir is that
+    id: 15
+    type: single
+    options:
+      - rm can remove files and directories, rmdir can only remove empty directories
+      - rmdir can remove files and directories, rm can only remove files
+    answers:
+      - 0
+  - text: Which of the following commands can I use to copy a file in linux?
+    id: 16
+    type: single
+    options:
+      - cp
+      - mv
+      - copy
+    answers:
+      - 0
+  - text: Which of the following commands can I use to move a file in linux?
+    id: 17
+    type: single
+    options:  
+      - cp
+      - mv
+      - move
+    answers:
+      - 1
+  - text: Which of the following commands can I use to create an empty file in linux?
+    id: 18
+    type: single
+    options:
+      - mkdir
+      - newfile
+      - touch
+    answers:
+      - 2
+  - text: Which of the following commands can I use to see the current working directory in linux?
+    id: 19
+    type: single
+    options:
+      - cwd
+      - pwd
+      - whereami
+    answers:
+      - 1
+  - text: strace may be used to check what?
+    id: 20
+    type: single
+    options:
+      - Network connections made by a process
+      - Memory usage of a process
+      - System calls made by a process
+    answers:
+      - 2
+  - text: Which commands can I use to see what processes are running in linux?
+    id: 21
+    type: multiple
+    options:
+      - ls proc
+      - ps
+      - top
+      - htop
+    answers:
+      - 1
+      - 2
+      - 3
