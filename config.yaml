@@ -1,5 +1,5 @@
 mode: "local"
 local:
-  data_dir: "quizzes"
+  data_dir: "./quizzes"
 aws:
   s3_bucket: "kmflow-quizzes"

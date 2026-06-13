@@ -63,6 +63,21 @@ var config Config
 var s3Svc *s3.S3
 
 func init() {
+
+	// Get the absolute path of the running executable
+	exePath, err := os.Executable()
+	if err != nil {
+		fmt.Printf("Failed to get executable path: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Switch the working directory to the executable's directory
+	exeDir := filepath.Dir(exePath)
+	if err := os.Chdir(exeDir); err != nil {
+		fmt.Printf("Failed to change directory: %v\n", err)
+		os.Exit(1)
+	}
+
 	// Load config.yaml
 	data, err := os.ReadFile("config.yaml")
 	if err != nil {
